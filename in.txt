@@ -1,0 +1,95 @@
+int x;
+float y;
+string name;
+bool flag;
+
+int x;
+
+class Person {
+    string name;
+    int age;
+
+    int age;
+    
+    int getAge() {
+        return age;
+    }
+
+    int getAge(){
+        return age;
+    }
+};
+
+int add(int a, int b) {
+    int result;
+    result = a + b;
+    return result;
+}
+
+int calc(int a, int a){
+    return a + a;
+}
+
+int add(int a)
+{
+    return a;
+}
+
+Person pers;
+
+begin_progr
+    x = 10;
+    y = 3.14;
+    flag = true;
+    name= "hello";
+    pers.age= 18;
+    pers.name= "Ana";
+    y=3.2+5.6;
+    Print(y);
+    x=5+10*2;
+    Print(x);
+    pers.getAge();
+    flag=(x<10);
+    Print(flag);
+    Print(2<7);
+    x=pers.getAge()+pers.age+1;
+    x=5%2;
+    Print(x);
+
+    z=10;
+    x=5.5;
+    x=5+5.5;
+    x="test";
+    y=5;
+    flag=12+5;
+    pers.age=3.14;
+    pers.name=42;
+    pers.salary=1000;
+    pers.getName();
+    fun();
+    x=5+add(2,3);
+    x=add(2,3)+3+4;
+    x=add(2,4.3);
+    x=add(2);
+    
+    x=4/3+2*(3+4)+5/4;
+    if(x+2 > 5 && x<20 || x==1000) {
+        Print(x);
+    }
+    else
+    {
+        y=3.4;
+    };
+
+    while(x > 0) {
+        x = x - 1;
+    };
+    Print(x);
+
+    while(x){
+        x=x+1;
+    };
+    
+    Print(x);
+    x = add(5, 3);
+end_progr
