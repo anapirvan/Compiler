@@ -395,17 +395,21 @@ func_call : ID '(' arg_list ')' {
                                           " parameters, but " + std::to_string($3->size()) + 
                                           " were provided";
                       yyerror(errMsg.c_str());
+                      $$ = new std::shared_ptr<ASTNode>(
+                        new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
                   } 
                   else 
                   {
                       // Check each parameter type
-                      for (size_t i = 0; i < expectedParams.size(); i++) {
+                      for (int i = 0; i < expectedParams.size(); i++) {
                           if (expectedParams[i] != (*$3)[i] && (*$3)[i] != "error") {
                               errorCount++;
                               std::string errMsg = "Parameter " + std::to_string(i+1) + 
                                                   " type mismatch: expected '" + expectedParams[i] + 
                                                   "' but got '" + (*$3)[i] + "'";
                               yyerror(errMsg.c_str());
+                              $$ = new std::shared_ptr<ASTNode>(
+                                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
                           }
                       }
                   }
@@ -434,6 +438,8 @@ func_call : ID '(' arg_list ')' {
                                           std::to_string(expectedParams.size()) + 
                                           " parameters, but 0 were provided";
                       yyerror(errMsg.c_str());
+                      $$ = new std::shared_ptr<ASTNode>(
+                      new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
                   }
                   // Returnează tipul funcției
                   std::string funType = currentScope->getFunType(*$1);
@@ -488,14 +494,18 @@ func_call : ID '(' arg_list ')' {
                                                   " parameters, but " + std::to_string($5->size()) + 
                                                   " were provided";
                               yyerror(errMsg.c_str());
+                              $$ = new std::shared_ptr<ASTNode>(
+                                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
                           } else {
-                              for (size_t i = 0; i < expectedParams.size(); i++) {
+                              for (int i = 0; i < expectedParams.size(); i++) {
                                   if (expectedParams[i] != (*$5)[i] && (*$5)[i] != "error") {
                                       errorCount++;
                                       std::string errMsg = "Parameter " + std::to_string(i+1) + 
                                                           " type mismatch: expected '" + expectedParams[i] + 
                                                           "' but got '" + (*$5)[i] + "'";
                                       yyerror(errMsg.c_str());
+                                      $$ = new std::shared_ptr<ASTNode>(
+                                        new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
                                   }
                               }
                           }
@@ -555,6 +565,8 @@ func_call : ID '(' arg_list ')' {
                                                   std::to_string(expectedParams.size()) + 
                                                   " parameters, but 0 were provided";
                               yyerror(errMsg.c_str());
+                              $$ = new std::shared_ptr<ASTNode>(
+                                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
                           }
                           // Returnează tipul metodei
                           std::string funType = classScope->getFunType(methodName);
@@ -708,13 +720,15 @@ expr
             std::string errMsg = "Type mismatch in addition: '" + (*$1)->exprType + "' + '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
             $$ = new std::shared_ptr<ASTNode>(
-                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope)
-            );
-        } else if (((*$1)->exprType != "int" && (*$1)->exprType != "float") || ((*$3)->exprType != "int" && (*$3)->exprType != "float")) {
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
+        } 
+        else if (((*$1)->exprType != "int" && (*$1)->exprType != "float") || ((*$3)->exprType != "int" && (*$3)->exprType != "float")) {
             if ((*$1)->exprType != "error" && (*$3)->exprType != "error") {
                 errorCount++;
                 std::string errMsg = "Invalid type for arithmetic operation";
                 yyerror(errMsg.c_str());
+                $$ = new std::shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
             }
             $$ = new std::shared_ptr<ASTNode>(
                 new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope)
@@ -731,7 +745,7 @@ expr
         // Verifică că ambii operanzi au același tip
         if ((*$1)->exprType != (*$3)->exprType && (*$1)->exprType != "error" && (*$3)->exprType != "error") {
             errorCount++;
-            std::string errMsg = "Type mismatch in addition: '" + (*$1)->exprType + "' + '" + (*$3)->exprType + "'";
+            std::string errMsg = "Type mismatch in substraction: '" + (*$1)->exprType + "' + '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
             $$ = new std::shared_ptr<ASTNode>(
                 new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope)
@@ -757,7 +771,7 @@ expr
         // Verifică că ambii operanzi au același tip
         if ((*$1)->exprType != (*$3)->exprType && (*$1)->exprType != "error" && (*$3)->exprType != "error") {
             errorCount++;
-            string errMsg = "Type mismatch in addition: '" + (*$1)->exprType + "' + '" + (*$3)->exprType + "'";
+            string errMsg = "Type mismatch in multiplication: '" + (*$1)->exprType + "' + '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
             $$ = new std::shared_ptr<ASTNode>(
                 new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope)
@@ -783,7 +797,7 @@ expr
         // Verifică că ambii operanzi au același tip
         if ((*$1)->exprType != (*$3)->exprType && (*$1)->exprType != "error" && (*$3)->exprType != "error") {
             errorCount++;
-            string errMsg = "Type mismatch in addition: '" + (*$1)->exprType + "' + '" + (*$3)->exprType + "'";
+            string errMsg = "Type mismatch in division: '" + (*$1)->exprType + "' + '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
              $$ = new shared_ptr<ASTNode>(
                 new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope)
@@ -809,7 +823,7 @@ expr
         // Verifică că ambii operanzi au același tip
         if ((*$1)->exprType != (*$3)->exprType && (*$1)->exprType != "error" && (*$3)->exprType != "error") {
             errorCount++;
-            string errMsg = "Type mismatch in addition: '" + (*$1)->exprType + "' + '" + (*$3)->exprType + "'";
+            string errMsg = "Type mismatch in modulo: '" + (*$1)->exprType + "' + '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
              $$ = new shared_ptr<ASTNode>(
                 new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope)
@@ -837,8 +851,7 @@ expr
             std::string errMsg = "Invalid type for unary minus: '" + (*$2)->exprType + "'";
             yyerror(errMsg.c_str());
              $$ = new shared_ptr<ASTNode>(
-                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope)
-            );
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         } else {
             $$ = new std::shared_ptr<ASTNode>(
             new ASTNode(ASTNode::UMINUS, *$2, (*$2)->exprType, currentScope)
@@ -851,6 +864,8 @@ expr
             errorCount++;
             string errMsg = "Type mismatch in comparison: '" + (*$1)->exprType + "' == '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
+             $$ = new shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         }
          $$ = new shared_ptr<ASTNode>(
             new ASTNode(ASTNode::EQ, *$1, *$3, "bool", currentScope));
@@ -862,6 +877,8 @@ expr
             errorCount++;
             string errMsg = "Type mismatch in comparison: '" + (*$1)->exprType + "' != '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
+             $$ = new shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         }
          $$ = new shared_ptr<ASTNode>(
             new ASTNode(ASTNode::NEQ, *$1, *$3, "bool", currentScope));
@@ -873,6 +890,8 @@ expr
             errorCount++;
             string errMsg = "Type mismatch in comparison: '" + (*$1)->exprType + "' < '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
+             $$ = new shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         }
         $$ = new shared_ptr<ASTNode>(
             new ASTNode(ASTNode::LT, *$1, *$3, "bool", currentScope));
@@ -884,6 +903,8 @@ expr
             errorCount++;
             string errMsg = "Type mismatch in comparison: '" + (*$1)->exprType + "' > '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
+             $$ = new shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         }
          $$ = new shared_ptr<ASTNode>(
             new ASTNode(ASTNode::GT, *$1, *$3, "bool", currentScope));
@@ -895,6 +916,8 @@ expr
             errorCount++;
             string errMsg = "Type mismatch in comparison: '" + (*$1)->exprType + "' <= '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
+             $$ = new shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         }
         $$ = new shared_ptr<ASTNode>(
             new ASTNode(ASTNode::LEQ, *$1, *$3, "bool", currentScope));
@@ -906,6 +929,8 @@ expr
             errorCount++;
             string errMsg = "Type mismatch in comparison: '" + (*$1)->exprType + "' >= '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
+             $$ = new shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         }
        $$ = new shared_ptr<ASTNode>(
             new ASTNode(ASTNode::GEQ, *$1, *$3, "bool", currentScope));
@@ -917,6 +942,8 @@ expr
             errorCount++;
             string errMsg = "Logical AND requires bool operands, got '" + (*$1)->exprType + "' and '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
+             $$ = new shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         }
         $$ = new shared_ptr<ASTNode>(
             new ASTNode(ASTNode::AND, *$1, *$3, "bool", currentScope));
@@ -928,6 +955,8 @@ expr
             errorCount++;
             string errMsg = "Logical OR requires bool operands, got '" + (*$1)->exprType + "' and '" + (*$3)->exprType + "'";
             yyerror(errMsg.c_str());
+            $$ = new shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         }
         $$ = new shared_ptr<ASTNode>(
             new ASTNode(ASTNode::OR, *$1, *$3, "bool", currentScope));
@@ -939,6 +968,8 @@ expr
             errorCount++;
             std::string errMsg = "NOT operator requires bool operand, got '" + (*$2)->exprType + "'";
             yyerror(errMsg.c_str());
+            $$ = new shared_ptr<ASTNode>(
+                new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope));
         }
          $$ = new shared_ptr<ASTNode>(
             new ASTNode(ASTNode::NOT, *$2, "bool", currentScope));
