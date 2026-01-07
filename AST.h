@@ -83,6 +83,7 @@ public:
         STRING_NODE,
         ID_NODE,
         OTHER_NODE,
+        IDENT,
         // Operatori binari aritmetici
         ADD,
         SUB,
@@ -131,8 +132,9 @@ public:
 
     // Constructor pentru ASSIGN
     ASTNode(const string &var, shared_ptr<ASTNode> expr, SymTable *sc)
-        : nodeType(ASSIGN), value(""), exprType(expr->exprType), varName(var), left(nullptr), right(expr), scope(sc) {}
-
+        : nodeType(ASSIGN), value(""), exprType(expr->exprType), varName(var),
+          left(make_shared<ASTNode>(IDENT, var, expr->exprType, sc)), 
+          right(expr), scope(sc){}
     // Evaluează AST-ul și returnează rezultatul
     Value evaluate()
     {
@@ -227,7 +229,8 @@ public:
         {
             Value result = right->evaluate();
 
-            SymTable *s = scope;
+            string targetVar = left->varName;
+            SymTable *s = left->scope;
             while (s)
             {
                 auto it = s->symbols.find(varName);
@@ -399,95 +402,6 @@ public:
         }
 
         return Value();
-    }
-
-    // Printează AST-ul (pentru debug)
-    void printAST(int indent = 0) const
-    {
-        string indentStr(indent * 2, ' ');
-
-        cout << indentStr;
-        switch (nodeType)
-        {
-        case INT_NODE:
-            cout << "INT: " << value;
-            break;
-        case FLOAT_NODE:
-            cout << "FLOAT: " << value;
-            break;
-        case BOOL_NODE:
-            cout << "BOOL: " << value;
-            break;
-        case STRING_NODE:
-            cout << "STRING: " << value;
-            break;
-        case ID_NODE:
-            cout << "ID: " << value;
-            break;
-        case OTHER_NODE:
-            cout << "OTHER";
-            break;
-        case ADD:
-            cout << "+";
-            break;
-        case SUB:
-            cout << "-";
-            break;
-        case MUL:
-            cout << "*";
-            break;
-        case DIV:
-            cout << "/";
-            break;
-        case EQ:
-            cout << "==";
-            break;
-        case NEQ:
-            cout << "!=";
-            break;
-        case LT:
-            cout << "<";
-            break;
-        case GT:
-            cout << ">";
-            break;
-        case LEQ:
-            cout << "<=";
-            break;
-        case GEQ:
-            cout << ">=";
-            break;
-        case AND:
-            cout << "&&";
-            break;
-        case OR:
-            cout << "||";
-            break;
-        case NOT:
-            cout << "!";
-            break;
-        case UMINUS:
-            cout << "-(unary)";
-            break;
-        case ASSIGN:
-            cout << "ASSIGN: " << varName;
-            break;
-        case PRINT:
-            cout << "PRINT";
-            break;
-        }
-        cout << " [type: " << exprType << "]" << endl;
-
-        if (left)
-        {
-            cout << indentStr << "Left:" << endl;
-            left->printAST(indent + 1);
-        }
-        if (right)
-        {
-            cout << indentStr << "Right:" << endl;
-            right->printAST(indent + 1);
-        }
     }
 };
 

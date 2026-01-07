@@ -72,14 +72,13 @@ global_decl : var_decl
 
 /* Variable declarations */
 var_decl : any_type ID ';' { 
-            if(!currentScope->existsId(*$2)) {
+            if(error==0){
+            if(!currentScope->existsId(*$2)) 
                 currentScope->addVar(*$1,*$2);
-   
             } else {
                 errorCount++; 
                 std::string errMsg = "Variable '" + *$2 + "' already declared in this scope";
                 yyerror(errMsg.c_str());
-                error=1;
             }
             delete $1;
             delete $2;
@@ -828,7 +827,7 @@ expr
              $$ = new shared_ptr<ASTNode>(
                 new ASTNode(ASTNode::OTHER_NODE, "", "error", currentScope)
             );
-        } else if (((*$1)->exprType != "int" && (*$1)->exprType != "float") || ((*$3)->exprType != "int" && (*$3)->exprType != "float")) {
+        } else if ((*$1)->exprType != "int" || (*$3)->exprType != "int") {
             if ((*$1)->exprType != "error" && (*$3)->exprType != "error") {
                 errorCount++;
                 string errMsg = "Invalid type for arithmetic operation";
